@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Product } from 'app/models/product.model';
 import { ProductsService } from 'app/services/products.service';
-import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-products',
@@ -9,9 +8,9 @@ import { Observable } from 'rxjs';
   styleUrls: ['./products.component.scss']
 })
 export class ProductsComponent implements OnInit {
-  layout: string = 'list';
+  layout: string = 'grid';
   allProducts!: Product[];
-  products!: Product[];
+  displayedProducts!: Product[];
   sortOptions!: {label: string, value: string}[];
   sortKey: any;
   sortField: string;
@@ -23,12 +22,15 @@ export class ProductsComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.ProductService.getAllProducts().subscribe(products => { this.allProducts = products; this.products = this.allProducts; console.log(this.allProducts, this.products);});
+    this.ProductService.getAllProducts().subscribe(products => {
+      this.allProducts = products;
+      this.displayedProducts = this.allProducts;
+    });
 
     this.sortOptions = [
-      {label: "Sort By", value: "id"}, 
-      {label: "Price (Low to High)", value: "price"}, 
-      {label: "Price (High to Low)", value: "!price"}, 
+      {label: "Default sort", value: "id"},
+      {label: "Price (Low to High)", value: "price"},
+      {label: "Price (High to Low)", value: "!price"},
       {label: "Rating", value: "!rating"}
     ];
   }
@@ -50,17 +52,17 @@ export class ProductsComponent implements OnInit {
     
     this.searchTimeout = setTimeout(() => {
       let search = event.target.value.trim().toLowerCase();
-
+      
       if (search.length === 0) {
-        this.products = this.allProducts;
+        this.displayedProducts = this.allProducts;
       } else {
-        this.products = this.allProducts.filter((object) => {
+        this.displayedProducts = this.allProducts.filter((object) => {
           return object.name.trim().toLowerCase().includes(search) || 
           object.description.trim().toLowerCase().includes(search) || 
           object.category.trim().toLowerCase().includes(search)
         });
       }
-    }, 1200);
+    }, 500);
   }
 
 }

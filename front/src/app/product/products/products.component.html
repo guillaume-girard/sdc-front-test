@@ -1,7 +1,7 @@
 <div class="card">
   <p-dataView 
       #dv 
-      [value]="products" 
+      [value]="displayedProducts" 
       [layout]="layout" 
       [sortField]="sortField" 
       [sortOrder]="sortOrder" 
@@ -9,7 +9,7 @@
       [showCurrentPageReport]="true"
       [currentPageReportTemplate]="'Showing {first} to {last} of {totalRecords} entries'"
       [rows]="10"
-      [rowsPerPageOptions]="[10, 25, 50]">
+      [rowsPerPageOptions]="[10, 25, 50]"><!-- potentiellement à mettre dans le ts (rows et rowsPerPageOptions)-->
     <ng-template pTemplate="header">
       <div class="flex flex-row justify-content-between">
         <div class="flex flex-column md:flex-row md:justify-content-between">
