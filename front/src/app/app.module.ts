@@ -9,6 +9,7 @@ import { AppComponent } from 'app/app.component';
 import { BaseModule } from 'app/base/base.module';
 import { SharedModule } from 'app/shared/shared.module';
 import { ProductModule } from './product/product.module';
+import { DataViewModule } from 'primeng/dataview';
 
 @NgModule({
   declarations: [AppComponent],
@@ -19,7 +20,8 @@ import { ProductModule } from './product/product.module';
     BrowserAnimationsModule,
     SharedModule,
     BaseModule,
-    ProductModule
+    ProductModule,
+    DataViewModule
   ],
   providers: [
     { provide: LOCALE_ID, useValue: 'en' }

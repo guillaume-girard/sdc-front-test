@@ -41,6 +41,7 @@
             "tsConfig": "src/tsconfig.app.json",
             "assets": ["src/favicon.ico", "src/assets", "src/manifest.webmanifest"],
             "styles": [
+              "./node_modules/primeflex/primeflex.css",
               "src/styles.scss",
               {
                 "input": "src/app/styles/dark.css",
