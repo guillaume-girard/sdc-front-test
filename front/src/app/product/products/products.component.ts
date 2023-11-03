@@ -62,7 +62,7 @@ export class ProductsComponent implements OnInit {
           object.category.trim().toLowerCase().includes(search)
         });
       }
-    }, 500);
+    }, 800);
   }
 
 }

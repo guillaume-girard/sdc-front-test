@@ -1,14 +1,17 @@
 <p-card>
   <div class="flex gap">
     <div class="flex justify-content-start gap-2" style="flex: 1">
-      <p-button label="New" icon="pi pi-plus" (click)="onNewProduct()" severity="success"></p-button>
-      <p-button label="Delete" icon="pi pi-trash" (click)="onDeleteSelectedProducts()" severity="danger" [disabled]="voidSelection"></p-button>
+      <p-button styleClass="p-button-success" label="New" icon="pi pi-plus" (click)="onNewProduct()" severity="success"></p-button>
+      <p-button styleClass="p-button-danger" label="Delete" icon="pi pi-trash" (click)="onDeleteSelectedProducts()" severity="danger" [disabled]="voidSelection"></p-button>
     </div>
     <div class="flex justify-content-end" style="flex: 1">
       <p-button icon="pi pi-cog" (click)="onOpenConfig()"></p-button>
     </div>
   </div>
 </p-card>
+
+<p-toast></p-toast>
+<p-confirmDialog [style]="{width: '50vw'}"></p-confirmDialog>
 
 <p-table
     [value]="products"
