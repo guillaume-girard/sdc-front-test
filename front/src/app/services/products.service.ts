@@ -21,6 +21,37 @@ export class ProductsService {
     return of(this.data);
     // return this.http.get<Product[]>(...);
   }
+  
+  public addProduct(newProduct: Product): Observable<Product[]> {
+    // Generate id & code values
+    let newProductCode = "";
+    do {
+      newProductCode = Math.random().toString(16).slice(2);
+    } while (this.data.find((product) => product.code == newProductCode))
+
+    let arrayIds = (this.data.map((prod) => prod.id)).sort((a, b) => a - b);
+    let newProductId = arrayIds[arrayIds.length - 1] + 1;
+
+    newProduct.id = newProductId;
+    newProduct.code = newProductCode;
+
+    // Save new product in "database"
+    this.data.push(newProduct);
+
+    return of(this.data);
+  }
+
+  public updateProduct(productUpdated: Product): Observable<Product[]> {
+    let idx = this.data.findIndex((product) => product.id == productUpdated.id);
+    
+    if (idx < 0) {
+      throw new Error('Product with id ' + productUpdated.id + ' does not exist');
+    } else {
+      this.data[idx] = productUpdated;
+    }
+
+    return of(this.data);
+  }
 
   public deleteProduct(productId: number): Observable<Product[]> {
     let product: Product = this.data.find((p) => p.id === productId);

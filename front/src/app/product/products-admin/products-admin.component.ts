@@ -2,12 +2,14 @@ import { Component, OnInit } from '@angular/core';
 import { Product } from 'app/models/product.model';
 import { ProductsService } from 'app/services/products.service';
 import { ConfirmEventType, ConfirmationService, MessageService } from 'primeng/api';
+import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
+import { ProductFormComponent } from './product-form/product-form.component';
 
 @Component({
   selector: 'app-products-admin',
   templateUrl: './products-admin.component.html',
   styleUrls: ['./products-admin.component.scss'],
-  providers: [ConfirmationService, MessageService]
+  providers: [ConfirmationService, MessageService, DialogService]
 })
 export class ProductsAdminComponent implements OnInit {
   products!: Product[];
@@ -17,9 +19,12 @@ export class ProductsAdminComponent implements OnInit {
 
   constructor(
     private ProductService: ProductsService,
+    public dialogService: DialogService,
     private confirmationService: ConfirmationService, 
     private messageService: MessageService
   ) { }
+
+  ref: DynamicDialogRef | undefined;
 
   ngOnInit(): void {
     this.ProductService.getAllProducts().subscribe(products => {
@@ -33,11 +38,53 @@ export class ProductsAdminComponent implements OnInit {
   }
 
   onNewProduct(): void {
-    console.log("new");
+    let newProduct: Product = new Product();
+
+    this.ref = this.dialogService.open(ProductFormComponent, {
+      data: {
+        product: newProduct,
+        mode: "new"
+      },
+      header: 'Nouveau produit',
+      width: '70%',
+      contentStyle: { overflow: 'auto' },
+      baseZIndex: 10000,
+      maximizable: true
+    });
+
+    this.ref.onClose.subscribe((product: Product) => {
+      if (product) {
+        this.ProductService.addProduct(product).subscribe(products => {
+          this.products = products;
+          this.totalRecords = this.products.length;
+          this.messageService.add({ severity: 'info', summary: 'New product saved', detail: product.name });
+        });
+      }
+    });
   }
 
-  onEditProduct(product: Product): void {
-    console.log("edit ", product);
+  onEditProduct(productToUpdate: Product): void {
+    this.ref = this.dialogService.open(ProductFormComponent, {
+      data: {
+        product: productToUpdate,
+        mode: "edit"
+      },
+      header: 'Modifier le produit',
+      width: '70%',
+      contentStyle: { overflow: 'auto' },
+      baseZIndex: 10000,
+      maximizable: true
+    });
+
+    this.ref.onClose.subscribe((product: Product) => {
+      if (product) {
+        this.ProductService.updateProduct(product).subscribe(products => {
+          this.products = products;
+          this.totalRecords = this.products.length;
+          this.messageService.add({ severity: 'info', summary: 'Product modified', detail: product.name });
+        });
+      }
+    });
   }
 
   onDeleteProduct(product: Product): void {

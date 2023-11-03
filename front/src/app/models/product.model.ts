@@ -1,12 +1,12 @@
 export class Product {
-  id!: number;
-  code!: string;
-  name!: string;
-  description!: string;
-  image!: string; 
-  price!: number;
-  category!: string;
-  quantity!: number;
-  inventoryStatus!: string;
-  rating!: number;
+  id: number = null;
+  code: string = null;
+  name: string = null;
+  description: string = null;
+  image: string = null; 
+  price: number = 0;
+  category: string = null;
+  quantity: number = 0;
+  inventoryStatus: string = null;
+  rating: number = null;
 }

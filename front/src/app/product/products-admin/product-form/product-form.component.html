@@ -1,0 +1,27 @@
+<form [formGroup]="productForm" (ngSubmit)="submitForm(product)">
+  <label for="product-name">name: </label>
+  <input id="product-name" type="text" formControlName="name" />
+
+  <label for="product-description">description: </label>
+  <textarea id="product-description" formControlName="description"></textarea>
+
+  <label for="product-image">image: </label>
+  <input id="product-image" type="text" formControlName="image" />
+  
+  <label for="product-price">price: </label>
+  <input id="product-price" type="number" formControlName="price" />
+
+  <label for="product-category">category: </label>
+  <input id="product-category" type="text" formControlName="category" />
+
+  <label for="product-quantity">quantity: </label>
+  <input id="product-quantity" type="text" formControlName="quantity" />
+
+  <label for="product-inventoryStatus">inventoryStatus: </label>
+  <input id="product-inventoryStatus" type="text" formControlName="inventoryStatus" />
+
+  <label for="product-rating">rating: </label>
+  <input id="product-rating" type="number" min="0" max="5" step="1" formControlName="rating" />
+
+  <button type="submit" pButton [disabled]="!productForm.valid">Enregistrer</button>
+</form>

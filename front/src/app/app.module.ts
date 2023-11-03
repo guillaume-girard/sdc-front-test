@@ -9,9 +9,6 @@ import { AppComponent } from 'app/app.component';
 import { BaseModule } from 'app/base/base.module';
 import { SharedModule } from 'app/shared/shared.module';
 import { ProductModule } from './product/product.module';
-import { DataViewModule } from 'primeng/dataview';
-import { ButtonModule } from 'primeng/button';
-import { ConfirmDialogModule } from 'primeng/confirmdialog';
 
 @NgModule({
   declarations: [AppComponent],
@@ -22,10 +19,7 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
     BrowserAnimationsModule,
     SharedModule,
     BaseModule,
-    ProductModule,
-    DataViewModule,
-    ButtonModule,
-    ConfirmDialogModule
+    ProductModule
   ],
   providers: [
     { provide: LOCALE_ID, useValue: 'en' }
