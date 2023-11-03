@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Product } from 'app/models/product.model';
 import { ProductsService } from 'app/services/products.service';
 
 @Component({
@@ -7,14 +8,27 @@ import { ProductsService } from 'app/services/products.service';
   styleUrls: ['./products-admin.component.scss']
 })
 export class ProductsAdminComponent implements OnInit {
+  products!: Product[];
+  selectedProducts!: Product[];
+  totalRecords: number;
 
   constructor(
     private ProductService: ProductsService
   ) { }
 
   ngOnInit(): void {
-    let prod = this.ProductService.getAllProducts();
-    console.log(prod);
+    this.ProductService.getAllProducts().subscribe(products => {
+      this.products = products;
+      this.totalRecords = this.products.length;
+    });
+  }
+
+  onSelectionChange(event: any): void {
+    console.log("selection changed", event);
+  }
+
+  onSelectAllChange(event: any): void {
+    console.log("selection all changed", event);
   }
 
 }
