@@ -10,6 +10,7 @@ import { ProductsService } from 'app/services/products.service';
 export class ProductsAdminComponent implements OnInit {
   products!: Product[];
   selectedProducts!: Product[];
+  voidSelection: boolean = true;
   totalRecords: number;
 
   constructor(
@@ -24,11 +25,26 @@ export class ProductsAdminComponent implements OnInit {
   }
 
   onSelectionChange(event: any): void {
-    console.log("selection changed", event);
+    this.voidSelection = this.selectedProducts.length == 0;
   }
 
-  onSelectAllChange(event: any): void {
-    console.log("selection all changed", event);
+  onNewProduct(): void {
+    console.log("new");
   }
 
+  onEditProduct(product: Product): void {
+    console.log("edit ", product);
+  }
+
+  onDeleteProduct(product: Product): void {
+    console.log("delete ", product);
+  }
+
+  onDeleteSelectedProducts(): void {
+    console.log("delete selected", this.selectedProducts);
+  }
+
+  onOpenConfig(): void {
+    console.log("open config");
+  }
 }
