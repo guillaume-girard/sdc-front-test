@@ -5,6 +5,7 @@ import { CommonModule } from '@angular/common';
 import { ProductsComponent } from './products/products.component';
 import { ProductsAdminComponent } from './products-admin/products-admin.component';
 import { ProductFormComponent } from './products-admin/product-form/product-form.component';
+import { SelectButtonModule } from 'primeng/selectbutton';
 
 @NgModule({
   declarations: [
@@ -15,7 +16,8 @@ import { ProductFormComponent } from './products-admin/product-form/product-form
   imports: [
     CommonModule,
     SharedModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    SelectButtonModule
   ],
   exports: [ProductsComponent, ProductsAdminComponent]
 })

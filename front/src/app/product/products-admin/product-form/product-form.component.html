@@ -1,27 +1,64 @@
 <form [formGroup]="productForm" (ngSubmit)="submitForm(product)">
-  <label for="product-name">name: </label>
-  <input id="product-name" type="text" formControlName="name" />
+  <p>Fields with * are required</p>
+  <div class="card flex flex-column">
 
-  <label for="product-description">description: </label>
-  <textarea id="product-description" formControlName="description"></textarea>
+    <div class="flex flex-column gap-2">
+      <label for="product-name">Name: *</label>
+      <input pInputText required id="product-name" type="text" formControlName="name" />
+    </div>
 
-  <label for="product-image">image: </label>
-  <input id="product-image" type="text" formControlName="image" />
-  
-  <label for="product-price">price: </label>
-  <input id="product-price" type="number" formControlName="price" />
+    <div class="flex flex-column gap-2">
+      <label for="product-description">Description: </label>
+      <textarea pInputTextarea id="product-description" formControlName="description"></textarea>
+    </div>
 
-  <label for="product-category">category: </label>
-  <input id="product-category" type="text" formControlName="category" />
+    <div class="flex flex-column gap-2">
+      <label for="product-image">URL image: </label>
+      <input pInputText id="product-image" type="text" formControlName="image" />
+    </div>
 
-  <label for="product-quantity">quantity: </label>
-  <input id="product-quantity" type="text" formControlName="quantity" />
+    <div class="flex flex-column gap-2">
+      <label for="product-price">Price: *</label>
+      <p-inputNumber formControlName="price" inputId="product-price" mode="currency" currency="USD" locale="en-US"></p-inputNumber>
+      <!-- <input id="product-price" type="number" formControlName="price" /> -->
+    </div>
 
-  <label for="product-inventoryStatus">inventoryStatus: </label>
-  <input id="product-inventoryStatus" type="text" formControlName="inventoryStatus" />
+    <div class="flex flex-column gap-2">
+      <label for="product-category">Category: </label>
+      <p-dropdown 
+          inputId="product-category"
+          [options]="existingCategories" 
+          formControlName="category"
+          placeholder="Select a Category" 
+          [editable]="true" 
+          optionLabel="name">
+      </p-dropdown>
+    </div>
 
-  <label for="product-rating">rating: </label>
-  <input id="product-rating" type="number" min="0" max="5" step="1" formControlName="rating" />
+    <div class="flex flex-column gap-2">
+      <label for="product-quantity">Quantity: </label>
+      <!-- <input pInputText id="product-quantity" type="text" formControlName="quantity" /> -->
+      <p-inputNumber 
+          formControlName="quantity"
+          [style]="{'width': '4rem'}"
+          [showButtons]="true" 
+          [min]="0"
+          buttonLayout="vertical" 
+          inputId="product-quantity"
+          incrementButtonIcon="pi pi-plus" 
+          decrementButtonIcon="pi pi-minus">
+      </p-inputNumber>
+    </div>
 
-  <button type="submit" pButton [disabled]="!productForm.valid">Enregistrer</button>
+    <div class="flex flex-column gap-2">
+      <label for="product-rating">Rating: </label>
+      <!-- <input id="product-rating" type="number" min="0" max="5" step="1" formControlName="rating" /> -->
+      <p-rating formControlName="rating" inputId="product-rating"></p-rating>
+    </div>
+  </div>
+
+  <div class="flex justify-content-center">
+    <button type="submit" pButton [disabled]="!productForm.valid">Save</button>
+  </div>
+
 </form>

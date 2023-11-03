@@ -16,6 +16,7 @@ export class ProductsAdminComponent implements OnInit {
   selectedProducts!: Product[];
   voidSelection: boolean = true;
   totalRecords: number;
+  existingCategories: any[];
 
   constructor(
     private ProductService: ProductsService,
@@ -31,6 +32,8 @@ export class ProductsAdminComponent implements OnInit {
       this.products = products;
       this.totalRecords = this.products.length;
     });
+
+    this.existingCategories = this.ProductService.getExistingCategories();
   }
 
   onSelectionChange(event: any): void {
@@ -43,9 +46,10 @@ export class ProductsAdminComponent implements OnInit {
     this.ref = this.dialogService.open(ProductFormComponent, {
       data: {
         product: newProduct,
-        mode: "new"
+        mode: "new",
+        categories: this.existingCategories
       },
-      header: 'Nouveau produit',
+      header: 'New product',
       width: '70%',
       contentStyle: { overflow: 'auto' },
       baseZIndex: 10000,
@@ -58,6 +62,7 @@ export class ProductsAdminComponent implements OnInit {
           this.products = products;
           this.totalRecords = this.products.length;
           this.messageService.add({ severity: 'info', summary: 'New product saved', detail: product.name });
+          this.existingCategories = this.ProductService.getExistingCategories();
         });
       }
     });
@@ -67,9 +72,10 @@ export class ProductsAdminComponent implements OnInit {
     this.ref = this.dialogService.open(ProductFormComponent, {
       data: {
         product: productToUpdate,
-        mode: "edit"
+        mode: "edit",
+        categories: this.existingCategories
       },
-      header: 'Modifier le produit',
+      header: 'Modify product',
       width: '70%',
       contentStyle: { overflow: 'auto' },
       baseZIndex: 10000,
@@ -82,6 +88,7 @@ export class ProductsAdminComponent implements OnInit {
           this.products = products;
           this.totalRecords = this.products.length;
           this.messageService.add({ severity: 'info', summary: 'Product modified', detail: product.name });
+          this.existingCategories = this.ProductService.getExistingCategories();
         });
       }
     });
@@ -98,6 +105,7 @@ export class ProductsAdminComponent implements OnInit {
           this.products = products;
           this.totalRecords = this.products.length;
           this.messageService.add({ severity: 'warn', summary: 'Deleted', detail: "Product " + product.name + " deleted" });
+          this.existingCategories = this.ProductService.getExistingCategories();
         });
       },
 

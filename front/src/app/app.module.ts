@@ -20,6 +20,7 @@ import { ProductModule } from './product/product.module';
     SharedModule,
     BaseModule,
     ProductModule
+    
   ],
   providers: [
     { provide: LOCALE_ID, useValue: 'en' }

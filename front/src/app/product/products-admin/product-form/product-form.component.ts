@@ -11,6 +11,7 @@ import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 export class ProductFormComponent implements OnInit {
   product: Product;
   mode: string;
+  existingCategories: any[];
   productForm: FormGroup;
 
   constructor(
@@ -20,6 +21,7 @@ export class ProductFormComponent implements OnInit {
   ) {
     this.product = config.data.product;
     this.mode = config.data.mode;
+    this.existingCategories = config.data.categories;
   }
 
   ngOnInit(): void {
@@ -30,7 +32,6 @@ export class ProductFormComponent implements OnInit {
       price: [this.product.price, Validators.required],
       category: [this.product.category],
       quantity: [this.product.quantity],
-      inventoryStatus: [this.product.inventoryStatus],
       rating: [this.product.rating]
     });
   }
