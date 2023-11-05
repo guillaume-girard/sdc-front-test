@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Product } from 'app/models/product.model';
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
+import { ProductsService } from 'app/services/products.service';
 
 @Component({
   selector: 'app-product-form',
@@ -17,21 +18,25 @@ export class ProductFormComponent implements OnInit {
   constructor(
       public ref: DynamicDialogRef, 
       public config: DynamicDialogConfig, 
-      private fb: FormBuilder
+      private fb: FormBuilder,
+      private ProductsService: ProductsService
   ) {
     this.product = config.data.product;
     this.mode = config.data.mode;
-    this.existingCategories = config.data.categories;
   }
 
   ngOnInit(): void {
+    this.ProductsService.getExistingCategories().subscribe(categories => {
+      this.existingCategories = categories;
+    });
+
     this.productForm = this.fb.group({
       name: [this.product.name, Validators.required],
-      description: [this.product.description],
+      description: [this.product.description, Validators.required],
       image: [this.product.image],
       price: [this.product.price, Validators.required],
-      category: [this.product.category],
-      quantity: [this.product.quantity],
+      category: [this.product.category, Validators.required],
+      quantity: [this.product.quantity, Validators.required],
       rating: [this.product.rating]
     });
   }

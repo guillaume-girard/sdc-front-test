@@ -2,7 +2,9 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Product } from 'app/models/product.model';
 import db from '../../assets/products.json';
-import { Observable, of } from 'rxjs';
+import { Observable, forkJoin, map, of, switchMap } from 'rxjs';
+
+const LOW_STOCK_LIMIT: number = 7;
 
 @Injectable({
   providedIn: 'root'
@@ -14,105 +16,76 @@ export class ProductsService {
   constructor(
     private http: HttpClient
   ) {
+    // @TODO supprimer
     this.data = db.data;
   }
-    
+  
   public getAllProducts(): Observable<Product[]> {
-    return of(this.data);
-    // return this.http.get<Product[]>(...);
+    return this.http.get<Product[]>('http://localhost:3000/products');
   }
 
-  public getExistingCategories(): any[] {
-    let categories = [];
+  // @TODO use new Set() instead
+  public getExistingCategories(): Observable<any[]> {
+    return this.getAllProducts().pipe(
+      map(allProducts => {
+        let categories = [];
 
-    for (let i = 0; i < this.data.length; i++) {
-      let entry = this.data[i];
-      if (categories.indexOf(entry.category) < 0) {
-        categories.push(entry.category);
-      }
-    }
+        for (let i = 0; i < allProducts.length; i++) {
+          let p = allProducts[i];
+          if (categories.indexOf(p.category) < 0) {
+            categories.push(p.category);
+          }
+        }
 
-console.log(categories);
-    return categories.map((entry) => { 
-      let o = {name: entry};
-      return o;
-    });
-    
+        return categories.map(cat => {return {"name": cat, "value": cat}});
+      }),
+      switchMap(categories => {
+        return of(categories)
+      })
+    )
   }
   
-  public addProduct(newProduct: Product): Observable<Product[]> {
-    // Generate id & code values
+  public addProduct(newProduct: Product): Observable<Product> {
+    // Generate code value
     let newProductCode = "";
     do {
       newProductCode = Math.random().toString(16).slice(2);
     } while (this.data.find((product) => product.code == newProductCode))
 
-    let arrayIds = (this.data.map((prod) => prod.id)).sort((a, b) => a - b);
-    let newProductId = arrayIds[arrayIds.length - 1] + 1;
-
-    newProduct.id = newProductId;
     newProduct.code = newProductCode;
 
     this.setProductInventoryStatus(newProduct);
 
     // Save new product in "database"
-    this.data.push(newProduct);
-
-    return of(this.data);
+    return this.http.post<Product>(`http://localhost:3000/products`, newProduct);
   }
 
-  public updateProduct(productUpdated: Product): Observable<Product[]> {
-    let idx = this.data.findIndex((product) => product.id == productUpdated.id);
-    
-    if (idx < 0) {
-      throw new Error('Product with id ' + productUpdated.id + ' does not exist');
-    } else {
-      this.setProductInventoryStatus(productUpdated);
-      this.data[idx] = productUpdated;
-    }
+  public updateProduct(productToUpdate: Product): Observable<Product> {
+    this.setProductInventoryStatus(productToUpdate);
+    // Remove id & code from data before patch
+    let { id, code, ...productUpdated } = productToUpdate;
 
-    return of(this.data);
+    return this.http.patch<Product>(`http://localhost:3000/products/` + id, productUpdated);
   }
 
-  public deleteProduct(productId: number): Observable<Product[]> {
-    let product: Product = this.data.find((p) => p.id === productId);
-    let idx = this.data.indexOf(product);
-    
-    if (idx < 0) {
-      // warning product does not exist
-      throw new Error('Product with id ' + productId + ' does not exist');
-    } else {
-      this.data.splice(idx, 1);
-    }
-
-    return of(this.data);
+  public deleteProduct(productId: number): Observable<any> {
+    return this.http.delete(`http://localhost:3000/products/` + productId);
   }
   
-  public deleteMultipleProducts(selectedProducts: Product[]): Observable<Product[]> {
-    let arrIdx: number[] = [];
-    let errorUnknownProduct: boolean = false;
+  public deleteMultipleProducts(selectedProducts: Product[]): Observable<any[]> {
+    let arrObservables: Observable<any>[] = [];
 
-    selectedProducts.forEach((prod) => {
-      let idx = this.data.indexOf(prod);
+    for (let i = 0; i < selectedProducts.length; i++) {
+      arrObservables.push(this.deleteProduct(selectedProducts[i].id));
+    }
 
-      if (idx < 0) {
-        // warning product does not exist
-        errorUnknownProduct = true;
-      } else {
-        this.data.splice(idx, 1);
-      }
-    });
-
-    if(errorUnknownProduct)
-      console.log("One product (at least) was unknown");
-
-    return of(this.data);
+    return forkJoin(arrObservables);
   }
 
   private setProductInventoryStatus(product: Product): void {
     if (!product.quantity || product.quantity == 0) {
       product.inventoryStatus = 'OUTOFSTOCK';
-    } else if (product.quantity < 7) {
+    } else if (product.quantity < LOW_STOCK_LIMIT) {
       product.inventoryStatus = 'LOWSTOCK';
     } else {
       product.inventoryStatus = 'INSTOCK';

@@ -4,12 +4,12 @@
 
     <div class="flex flex-column gap-2">
       <label for="product-name">Name: *</label>
-      <input pInputText required id="product-name" type="text" formControlName="name" />
+      <input pInputText id="product-name" type="text" formControlName="name" required />
     </div>
 
     <div class="flex flex-column gap-2">
-      <label for="product-description">Description: </label>
-      <textarea pInputTextarea id="product-description" formControlName="description"></textarea>
+      <label for="product-description">Description: *</label>
+      <textarea pInputTextarea id="product-description" formControlName="description" required></textarea>
     </div>
 
     <div class="flex flex-column gap-2">
@@ -24,19 +24,21 @@
     </div>
 
     <div class="flex flex-column gap-2">
-      <label for="product-category">Category: </label>
+      <label for="product-category">Category: *</label>
       <p-dropdown 
           inputId="product-category"
           [options]="existingCategories" 
           formControlName="category"
           placeholder="Select a Category" 
           [editable]="true" 
-          optionLabel="name">
+          optionLabel="name"
+          optionValue="value"
+          [required]="true">
       </p-dropdown>
     </div>
 
     <div class="flex flex-column gap-2">
-      <label for="product-quantity">Quantity: </label>
+      <label for="product-quantity">Quantity: *</label>
       <!-- <input pInputText id="product-quantity" type="text" formControlName="quantity" /> -->
       <p-inputNumber 
           formControlName="quantity"
@@ -46,7 +48,8 @@
           buttonLayout="vertical" 
           inputId="product-quantity"
           incrementButtonIcon="pi pi-plus" 
-          decrementButtonIcon="pi pi-minus">
+          decrementButtonIcon="pi pi-minus"
+          [required]="true">
       </p-inputNumber>
     </div>
 
