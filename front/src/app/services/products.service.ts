@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Product } from 'app/models/product.model';
 import db from '../../assets/products.json';
-import { Observable, forkJoin, map, of, switchMap } from 'rxjs';
+import { Observable, forkJoin, from, map, of, switchMap } from 'rxjs';
 
 const LOW_STOCK_LIMIT: number = 7;
 
@@ -11,58 +11,49 @@ const LOW_STOCK_LIMIT: number = 7;
 })
 export class ProductsService {
 
-  private data: Product[];
-  
-  constructor(
-    private http: HttpClient
-  ) {
-    // @TODO supprimer
-    this.data = db.data;
-  }
+  constructor(private http: HttpClient) {}
   
   public getAllProducts(): Observable<Product[]> {
     return this.http.get<Product[]>('http://localhost:3000/products');
   }
 
-  // @TODO use new Set() instead
-  public getExistingCategories(): Observable<any[]> {
+  public getExistingCategories(): Observable<string[]> {
     return this.getAllProducts().pipe(
       map(allProducts => {
-        let categories = [];
-
-        for (let i = 0; i < allProducts.length; i++) {
-          let p = allProducts[i];
-          if (categories.indexOf(p.category) < 0) {
-            categories.push(p.category);
-          }
-        }
-
-        return categories.map(cat => {return {"name": cat, "value": cat}});
+        let categories = new Set<string>();
+        allProducts.forEach(product => { categories.add(product.category) });
+        return categories;
       }),
       switchMap(categories => {
-        return of(categories)
+        return of(Array.from(categories))
       })
     )
   }
   
   public addProduct(newProduct: Product): Observable<Product> {
-    // Generate code value
-    let newProductCode = "";
-    do {
-      newProductCode = Math.random().toString(16).slice(2);
-    } while (this.data.find((product) => product.code == newProductCode))
-
-    newProduct.code = newProductCode;
 
     this.setProductInventoryStatus(newProduct);
 
-    // Save new product in "database"
-    return this.http.post<Product>(`http://localhost:3000/products`, newProduct);
+    // Generate uniq code then POST new product
+    return this.getAllProducts().pipe(
+      map(allProducts => {
+        let newProductCode = "";
+        do {
+          newProductCode = Math.random().toString(16).slice(2);
+        } while (allProducts.find((product) => product.code == newProductCode));
+
+        return {
+          ...newProduct,
+          code: newProductCode
+        }
+      }),
+      switchMap(newProduct => this.http.post<Product>(`http://localhost:3000/products`, newProduct))
+    );
   }
 
   public updateProduct(productToUpdate: Product): Observable<Product> {
     this.setProductInventoryStatus(productToUpdate);
-    // Remove id & code from data before patch
+    // Remove id & code from product before patch
     let { id, code, ...productUpdated } = productToUpdate;
 
     return this.http.patch<Product>(`http://localhost:3000/products/` + id, productUpdated);

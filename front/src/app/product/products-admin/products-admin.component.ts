@@ -84,7 +84,6 @@ export class ProductsAdminComponent implements OnInit {
     this.ref.onClose.subscribe((product: Product) => {
       if (product) {
         this.ProductService.addProduct(product).subscribe(newProduct => {
-          console.log('new product: ', newProduct);
           this.messageService.add({ severity: 'info', summary: 'New product saved', detail: newProduct.name });
           this.products.push(newProduct);
           this.totalRecords = this.products.length;
@@ -125,17 +124,11 @@ export class ProductsAdminComponent implements OnInit {
       icon: 'pi pi-exclamation-triangle',
 
       accept: () => {
-        this.ProductService.deleteProduct(product.id).subscribe({
-          next: function(){
+        this.ProductService.deleteProduct(product.id).subscribe(() => {
             this.messageService.add({ severity: 'warn', summary: 'Deleted', detail: "Product " + product.name + " deleted" });
 
             this.deleteProductFromData(product);
-          },
-          error: function(err: any) {
-            console.error(err);
-            // voir si y'a aussi "complete: function()"
-          }
-        });
+          });
       },
 
       reject: (type: ConfirmEventType) => {

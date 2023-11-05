@@ -12,7 +12,7 @@ import { ProductsService } from 'app/services/products.service';
 export class ProductFormComponent implements OnInit {
   product: Product;
   mode: string;
-  existingCategories: any[];
+  existingCategories: string[];
   productForm: FormGroup;
 
   constructor(
