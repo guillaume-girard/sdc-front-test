@@ -1,10 +1,10 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { Product } from 'app/models/product.model';
 import { ProductsService } from 'app/services/products.service';
 import { ConfirmEventType, ConfirmationService, MessageService } from 'primeng/api';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { ProductFormComponent } from './product-form/product-form.component';
-import { switchMap, tap } from 'rxjs';
+import { MultiSelect } from 'primeng/multiselect';
 
 interface Column {
   field: string;
@@ -35,6 +35,7 @@ export class ProductsAdminComponent implements OnInit {
   ) { }
 
   ref: DynamicDialogRef | undefined;
+  @ViewChild('pms') pms: MultiSelect;
 
   ngOnInit(): void {
     this.ProductService.getAllProducts().subscribe(products => {
@@ -50,7 +51,12 @@ export class ProductsAdminComponent implements OnInit {
       { field: 'quantity', header: 'Quantity', sortable: true,  filterType: 'numeric' }
     ];
 
-    this._selectedColumns = this.cols;
+    
+    this._selectedColumns = [this.cols[0]];
+  }
+
+  ngAfterViewInit() {
+    console.log(this.pms);
   }
 
   @Input() get selectedColumns(): any[] {
@@ -167,7 +173,7 @@ export class ProductsAdminComponent implements OnInit {
   }
 
   onOpenConfig(): void {
-    console.log("open config");
+    this.pms.show();
   }
 
   private deleteProductFromData(product: Product): void {

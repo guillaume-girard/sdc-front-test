@@ -30,8 +30,17 @@
     [totalRecords]="totalRecords">
 
   <ng-template pTemplate="caption">
-    <p-multiSelect [options]="cols" [(ngModel)]="selectedColumns" optionLabel="header"
-        selectedItemsLabel="{0} columns selected" [style]="{'min-width': '200px'}" placeholder="Choose Columns"></p-multiSelect>
+    <p-multiSelect 
+        #pms
+        dropdownIcon="pi pi-cog"
+        [options]="cols" 
+        [(ngModel)]="selectedColumns" 
+        optionLabel="header"
+        [maxSelectedLabels]=" 0"
+        selectedItemsLabel="{0} columns selected" 
+        [style]="{'min-width': '200px'}" 
+        placeholder="Choose Columns">
+    </p-multiSelect>
   </ng-template>
 
   <ng-template pTemplate="header" let-columns>
